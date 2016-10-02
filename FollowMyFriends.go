@@ -19,7 +19,11 @@ type SegmentFinder interface {
 }
 
 type Data struct {
+	segments []SegmentData
+}
 
+type SegmentData struct {
+	Id int64
 }
 
 func (follower *Follower) Follow()  {

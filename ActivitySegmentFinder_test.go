@@ -6,7 +6,7 @@ import (
 
 func TestSegmentsLoadedForLastActivity(t *testing.T) {
 	var mockActivityLoader MockActivityLoader
-	var mockSegmentLoader MockSegmentLoader
+	var mockSegmentLoader MockSegmentDataGenerator
 	activitySegmentFinder := ActivitySegmentFinder{&mockActivityLoader, &mockSegmentLoader}
 
 	data := activitySegmentFinder.loadSegmentsForAthlete(5)
@@ -31,11 +31,11 @@ func (loader *MockActivityLoader) lastActivityIdForAthlete(athleteId int64) int6
 	return 1;
 }
 
-type MockSegmentLoader struct {
+type MockSegmentDataGenerator struct {
 	capturedActivityId int64
 }
 
-func (loader *MockSegmentLoader) loadSegments(activityId int64) *Data {
+func (loader *MockSegmentDataGenerator) getSegmentData(activityId int64) *Data {
 	loader.capturedActivityId = activityId
 	return &Data{}
 }
