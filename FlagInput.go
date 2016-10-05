@@ -13,8 +13,8 @@ func NewFlagInput() *FlagInput {
 }
 
 func (input *FlagInput) athleteId() int64 {
-	if (!flag.Parsed()) {
+	if !flag.Parsed() {
 		flag.Parse()
 	}
-	return input.id;
+	return input.id
 }

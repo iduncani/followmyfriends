@@ -1,7 +1,7 @@
 package followmyfriends
 
 type SegmentDataCollector struct {
-	data Data
+	data          Data
 	segmentLoader SegmentLoader
 }
 
@@ -10,6 +10,10 @@ type SegmentLoader interface {
 }
 
 func (collector *SegmentDataCollector) getSegmentData(activityId int64) *Data {
-
+	segmentIds := collector.segmentLoader.loadSegments(activityId)
+	for _, id := range segmentIds {
+		segmentData := SegmentData{id}
+		collector.data.segments = append(collector.data.segments, &segmentData)
+	}
 	return &collector.data
 }

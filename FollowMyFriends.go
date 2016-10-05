@@ -11,7 +11,6 @@ type FollowFriendInput interface {
 }
 
 type FollowFriendOutput interface {
-
 }
 
 type SegmentFinder interface {
@@ -19,13 +18,13 @@ type SegmentFinder interface {
 }
 
 type Data struct {
-	segments []SegmentData
+	segments []*SegmentData
 }
 
 type SegmentData struct {
 	Id int64
 }
 
-func (follower *Follower) Follow()  {
+func (follower *Follower) Follow() {
 	follower.segmentFinder.loadSegmentsForAthlete(follower.input.athleteId())
 }

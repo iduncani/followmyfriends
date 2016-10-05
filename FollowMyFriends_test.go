@@ -21,15 +21,13 @@ func TestAtheleteIdPassedToDataLoader(t *testing.T) {
 }
 
 type MockInput struct {
-
 }
 
 func (input *MockInput) athleteId() int64 {
-	return 1;
+	return 1
 }
 
 type MockPrinter struct {
-
 }
 
 type MockSegmentFinder struct {

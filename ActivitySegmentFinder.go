@@ -2,7 +2,7 @@ package followmyfriends
 
 type ActivitySegmentFinder struct {
 	activityLoader ActivityLoader
-	segmentLoader SegmentDataGenerator
+	segmentLoader  SegmentDataGenerator
 }
 
 type ActivityLoader interface {
@@ -14,7 +14,7 @@ type SegmentDataGenerator interface {
 }
 
 func (finder *ActivitySegmentFinder) loadSegmentsForAthlete(athleteId int64) *Data {
-	activityId := finder.activityLoader.lastActivityIdForAthlete(athleteId);
-	segmentData := finder.segmentLoader.getSegmentData(activityId);
+	activityId := finder.activityLoader.lastActivityIdForAthlete(athleteId)
+	segmentData := finder.segmentLoader.getSegmentData(activityId)
 	return segmentData
 }

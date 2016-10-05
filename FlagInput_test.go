@@ -8,7 +8,7 @@ import (
 func TestFlagParsesAthleteId(t *testing.T) {
 	input := NewFlagInput()
 	err := flag.Set("id", "1")
-	if (err != nil) {
+	if err != nil {
 		print("Have error ", err.Error())
 		t.Error(err.Error())
 	}

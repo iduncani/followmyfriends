@@ -18,7 +18,7 @@ func TestSegmentsLoadedForLastActivity(t *testing.T) {
 		t.Error("Expected the activity ID of 1 but got ", mockSegmentLoader.capturedActivityId)
 	}
 	if data == nil {
-		t.Error("No data was returned");
+		t.Error("No data was returned")
 	}
 }
 
@@ -28,7 +28,7 @@ type MockActivityLoader struct {
 
 func (loader *MockActivityLoader) lastActivityIdForAthlete(athleteId int64) int64 {
 	loader.capturedAthleteId = athleteId
-	return 1;
+	return 1
 }
 
 type MockSegmentDataGenerator struct {

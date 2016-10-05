@@ -3,7 +3,7 @@ package followmyfriends
 import "testing"
 
 func TestSingleSegmentRecorded(t *testing.T) {
-	mockSegmentLoader := MockSegmentLoader{}
+	mockSegmentLoader := MockSegmentLoader{segmentsToReturn: []int64{2}}
 	testObject := SegmentDataCollector{segmentLoader: &mockSegmentLoader}
 
 	result := testObject.getSegmentData(1)
@@ -21,11 +21,47 @@ func TestSingleSegmentRecorded(t *testing.T) {
 	}
 }
 
+func TestTwoSegmentsRecorded(t *testing.T) {
+	mockSegmentLoader := MockSegmentLoader{segmentsToReturn: []int64{3, 4}}
+	testObject := SegmentDataCollector{segmentLoader: &mockSegmentLoader}
+
+	result := testObject.getSegmentData(1)
+
+	assertCorrectIdsFound(result, mockSegmentLoader, t)
+}
+
+func assertCorrectIdsFound(result *Data, loader MockSegmentLoader, t *testing.T) {
+	if loader.capturedActivityId != 1 {
+		t.Error("Expected the supplied activity ID to be given to segment loader but got ", loader.capturedActivityId)
+	}
+	if len(result.segments) != len(loader.segmentsToReturn) {
+		t.Errorf("Expected the same number of segments (%d)as in the mocked loader but got %d", len(loader.segmentsToReturn), len(result.segments))
+	} else {
+		for _, resultSegmentData := range result.segments {
+			if !isExpectedSegment(resultSegmentData, loader) {
+				t.Errorf("A segment ID %s was returned that wasn't expected", resultSegmentData.Id)
+			}
+
+		}
+	}
+}
+
+func isExpectedSegment(segmentData *SegmentData, loader MockSegmentLoader) bool {
+	segmentId := segmentData.Id
+	for _, expectedId := range loader.segmentsToReturn {
+		if segmentId == expectedId {
+			return true
+		}
+	}
+	return false
+}
+
 type MockSegmentLoader struct {
 	capturedActivityId int64
+	segmentsToReturn   []int64
 }
 
 func (loader *MockSegmentLoader) loadSegments(activityId int64) []int64 {
 	loader.capturedActivityId = activityId
-	return []int64 {2}
+	return loader.segmentsToReturn
 }
