@@ -4,7 +4,7 @@ import "testing"
 
 func TestSingleSegmentRecorded(t *testing.T) {
 	mockSegmentLoader := MockSegmentLoader{segmentsToReturn: []int64{2}}
-	testObject := SegmentDataCollector{segmentLoader: &mockSegmentLoader}
+	testObject := NewSegmentDataCollector(&mockSegmentLoader)
 
 	result := testObject.getSegmentData(1)
 
@@ -23,11 +23,27 @@ func TestSingleSegmentRecorded(t *testing.T) {
 
 func TestTwoSegmentsRecorded(t *testing.T) {
 	mockSegmentLoader := MockSegmentLoader{segmentsToReturn: []int64{3, 4}}
-	testObject := SegmentDataCollector{segmentLoader: &mockSegmentLoader}
+	testObject := NewSegmentDataCollector(&mockSegmentLoader)
 
 	result := testObject.getSegmentData(1)
 
 	assertCorrectIdsFound(result, mockSegmentLoader, t)
+}
+
+func TestSegmentRunTwiceIsRecordedAsOneSegment(t *testing.T) {
+	mockSegmentLoader := MockSegmentLoader{segmentsToReturn: []int64{3, 3}}
+	testObject := NewSegmentDataCollector(&mockSegmentLoader)
+
+	result := testObject.getSegmentData(1)
+
+	if len(result.segments) != 1 {
+		t.Errorf("Expected a single segment to be returned but got %d", len(result.segments))
+	} else {
+		segmentData := result.segments[0]
+		if segmentData.Id != 3 {
+			t.Errorf("Expected the segment ID of 3 but go %s", segmentData.Id)
+		}
+	}
 }
 
 func assertCorrectIdsFound(result *Data, loader MockSegmentLoader, t *testing.T) {
@@ -35,7 +51,7 @@ func assertCorrectIdsFound(result *Data, loader MockSegmentLoader, t *testing.T)
 		t.Error("Expected the supplied activity ID to be given to segment loader but got ", loader.capturedActivityId)
 	}
 	if len(result.segments) != len(loader.segmentsToReturn) {
-		t.Errorf("Expected the same number of segments (%d)as in the mocked loader but got %d", len(loader.segmentsToReturn), len(result.segments))
+		t.Errorf("Expected the same number of segments (%d) as in the mocked loader but got %d", len(loader.segmentsToReturn), len(result.segments))
 	} else {
 		for _, resultSegmentData := range result.segments {
 			if !isExpectedSegment(resultSegmentData, loader) {
