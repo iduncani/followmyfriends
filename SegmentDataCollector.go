@@ -16,18 +16,29 @@ type SegmentLoader interface {
 func (collector *SegmentDataCollector) getSegmentData(activityId int64) *Data {
 	segmentIds := collector.segmentLoader.loadSegments(activityId)
 	for _, id := range segmentIds {
-		segmentData, ok := collector.segmentDataById[activityId]
-		if !ok {
-			segmentData = &SegmentData{id}
-			collector.segmentDataById[id] = segmentData
-		}
+		collector.recordSegment(id)
 	}
-	allSegmentData := make([]*SegmentData, len(collector.segmentDataById))
-	index := 0
-	for _, segmentData := range(collector.segmentDataById)  {
-		allSegmentData[index] = segmentData
-		index++
-	}
+	allSegmentData := values(collector.segmentDataById)
 	data := Data{ allSegmentData }
 	return &data
+}
+
+func (collector *SegmentDataCollector) recordSegment(segmentId int64) {
+	segmentData, ok := collector.segmentDataById[segmentId]
+	if !ok {
+		segmentData = &SegmentData{segmentId, 1}
+		collector.segmentDataById[segmentId] = segmentData
+	} else {
+		segmentData.runCount = segmentData.runCount + 1;
+	}
+}
+
+func values(fromMap map[int64]*SegmentData) []*SegmentData {
+	values := make([]*SegmentData, len(fromMap))
+	index := 0
+	for _, segmentData := range(fromMap)  {
+		values[index] = segmentData
+		index++
+	}
+	return values
 }

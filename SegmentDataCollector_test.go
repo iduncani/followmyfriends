@@ -31,7 +31,7 @@ func TestTwoSegmentsRecorded(t *testing.T) {
 }
 
 func TestSegmentRunTwiceIsRecordedAsOneSegment(t *testing.T) {
-	mockSegmentLoader := MockSegmentLoader{segmentsToReturn: []int64{3, 3}}
+	mockSegmentLoader := MockSegmentLoader{segmentsToReturn: []int64{5, 5}}
 	testObject := NewSegmentDataCollector(&mockSegmentLoader)
 
 	result := testObject.getSegmentData(1)
@@ -40,9 +40,22 @@ func TestSegmentRunTwiceIsRecordedAsOneSegment(t *testing.T) {
 		t.Errorf("Expected a single segment to be returned but got %d", len(result.segments))
 	} else {
 		segmentData := result.segments[0]
-		if segmentData.Id != 3 {
-			t.Errorf("Expected the segment ID of 3 but go %s", segmentData.Id)
+		if segmentData.Id != 5 {
+			t.Errorf("Expected the segment ID of 5 but go %d", segmentData.Id)
 		}
+	}
+}
+
+func TestSegmentRunTwiceIsRecordedAsBeingRunTwice(t *testing.T) {
+	mockSegmentLoader := MockSegmentLoader{segmentsToReturn: []int64{6, 6}}
+	testObject := NewSegmentDataCollector(&mockSegmentLoader)
+
+	result := testObject.getSegmentData(1)
+
+
+	segmentData := result.segments[0]
+	if segmentData.runCount != 2 {
+		t.Errorf("Expected the segment to say it had been run twice but was %d", segmentData.runCount)
 	}
 }
 

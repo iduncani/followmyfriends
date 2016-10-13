@@ -23,6 +23,7 @@ type Data struct {
 
 type SegmentData struct {
 	Id int64
+	runCount int32
 }
 
 func (follower *Follower) Follow() {
