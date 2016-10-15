@@ -14,7 +14,7 @@ type FollowFriendOutput interface {
 }
 
 type SegmentFinder interface {
-	loadSegmentsForAthlete(athleteId int64) *Data
+	loadSegmentsForLastActivity(athleteId int64) *Data
 }
 
 type Data struct {
@@ -22,10 +22,10 @@ type Data struct {
 }
 
 type SegmentData struct {
-	Id int64
+	Id       int64
 	runCount int32
 }
 
 func (follower *Follower) Follow() {
-	follower.segmentFinder.loadSegmentsForAthlete(follower.input.athleteId())
+	follower.segmentFinder.loadSegmentsForLastActivity(follower.input.athleteId())
 }

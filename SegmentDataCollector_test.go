@@ -4,7 +4,7 @@ import "testing"
 
 func TestSingleSegmentRecorded(t *testing.T) {
 	mockSegmentLoader := MockSegmentLoader{segmentsToReturn: []int64{2}}
-	testObject := NewSegmentDataCollector(&mockSegmentLoader)
+	testObject := NewSegmentDataCollector(&mockSegmentLoader, nil)
 
 	result := testObject.getSegmentData(1)
 
@@ -23,7 +23,7 @@ func TestSingleSegmentRecorded(t *testing.T) {
 
 func TestTwoSegmentsRecorded(t *testing.T) {
 	mockSegmentLoader := MockSegmentLoader{segmentsToReturn: []int64{3, 4}}
-	testObject := NewSegmentDataCollector(&mockSegmentLoader)
+	testObject := NewSegmentDataCollector(&mockSegmentLoader, nil)
 
 	result := testObject.getSegmentData(1)
 
@@ -32,7 +32,7 @@ func TestTwoSegmentsRecorded(t *testing.T) {
 
 func TestSegmentRunTwiceIsRecordedAsOneSegment(t *testing.T) {
 	mockSegmentLoader := MockSegmentLoader{segmentsToReturn: []int64{5, 5}}
-	testObject := NewSegmentDataCollector(&mockSegmentLoader)
+	testObject := NewSegmentDataCollector(&mockSegmentLoader, nil)
 
 	result := testObject.getSegmentData(1)
 
@@ -48,14 +48,28 @@ func TestSegmentRunTwiceIsRecordedAsOneSegment(t *testing.T) {
 
 func TestSegmentRunTwiceIsRecordedAsBeingRunTwice(t *testing.T) {
 	mockSegmentLoader := MockSegmentLoader{segmentsToReturn: []int64{6, 6}}
-	testObject := NewSegmentDataCollector(&mockSegmentLoader)
+	testObject := NewSegmentDataCollector(&mockSegmentLoader, nil)
 
 	result := testObject.getSegmentData(1)
-
 
 	segmentData := result.segments[0]
 	if segmentData.runCount != 2 {
 		t.Errorf("Expected the segment to say it had been run twice but was %d", segmentData.runCount)
+	}
+}
+
+func TestDataIsLoadedForActivity(t *testing.T) {
+	mockSegmentLoader := MockSegmentLoader{segmentsToReturn: []int64{}}
+	mockActivityLoader := MockActivityLoader{activityIdToReturn: 2}
+	testObject := NewSegmentDataCollector(&mockSegmentLoader, &mockActivityLoader)
+
+	testObject.loadSegmentsForLastActivity(1)
+
+	if mockActivityLoader.capturedAthlete != 1 {
+		t.Errorf("Expected the information to be loaded for the supplied athlete ID but was %d", mockActivityLoader.capturedAthlete)
+	}
+	if mockSegmentLoader.capturedActivityId != 2 {
+		t.Errorf("Expected the activity ID to be used to get segments but was %d", mockSegmentLoader.capturedActivityId)
 	}
 }
 
@@ -93,4 +107,14 @@ type MockSegmentLoader struct {
 func (loader *MockSegmentLoader) loadSegments(activityId int64) []int64 {
 	loader.capturedActivityId = activityId
 	return loader.segmentsToReturn
+}
+
+type MockActivityLoader struct {
+	capturedAthlete    int64
+	activityIdToReturn int64
+}
+
+func (loader *MockActivityLoader) lastActivityIdForAthlete(athleteId int64) int64 {
+	loader.capturedAthlete = athleteId
+	return loader.activityIdToReturn
 }

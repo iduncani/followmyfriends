@@ -34,7 +34,7 @@ type MockSegmentFinder struct {
 	athleteId int64
 }
 
-func (loader *MockSegmentFinder) loadSegmentsForAthlete(atheleteId int64) *Data {
+func (loader *MockSegmentFinder) loadSegmentsForLastActivity(atheleteId int64) *Data {
 	loader.athleteId = atheleteId
 	return new(Data)
 }
